@@ -103,3 +103,30 @@ func (cli *AuthenticationAdmin) ListUser(pagination common.PaginationParams) (us
 
 	return
 }
+
+// 发送短信
+func (cli *AuthenticationAdmin) PostSMS(phone string, content string) error {
+	body, err := cli.SendHttpRequest("sms/content", http.MethodPost, map[string]interface{}{
+		"phone":   phone,
+		"content": content,
+	})
+	if err != nil {
+		return err
+	}
+	var p fastjson.Parser
+	v, err := p.Parse(string(body))
+	if err != nil {
+		return err
+	}
+
+	if !v.GetBool("status") {
+		msg := v.GetStringBytes("message")
+		if err != nil {
+			return err
+		}
+		return errors.New(string(msg))
+	}
+
+	return nil
+
+}
