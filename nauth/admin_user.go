@@ -106,7 +106,7 @@ func (cli *AuthenticationAdmin) ListUser(pagination common.PaginationParams) (us
 
 // 发送短信
 func (cli *AuthenticationAdmin) PostSMS(phone string, content string) error {
-	body, err := cli.SendHttpRequest("/users/sms/content", http.MethodPost, map[string]interface{}{
+	body, err := cli.SendHttpRequest("/user/sms/content", http.MethodPost, map[string]interface{}{
 		"phone":   phone,
 		"content": content,
 	})
