@@ -130,3 +130,31 @@ func (cli *AuthenticationAdmin) PostSMS(phone string, content string) error {
 	return nil
 
 }
+
+func (c *AuthenticationAdmin) PostEmail(email string, content string, scene int) error {
+
+	body, err := c.SendHttpRequest("/user/email", http.MethodPost, map[string]interface{}{
+		"email":   email,
+		"content": content,
+		"scene":   scene,
+	})
+	if err != nil {
+		return err
+	}
+
+	var p fastjson.Parser
+	v, err := p.Parse(string(body))
+	if err != nil {
+		return err
+	}
+
+	if !v.GetBool("status") {
+		msg := v.GetStringBytes("message")
+		if err != nil {
+			return err
+		}
+		return errors.New(string(msg))
+	}
+
+	return nil
+}
